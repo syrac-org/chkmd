@@ -86,8 +86,7 @@ async def check_http_link(
 
 
 async def check_local_link(url: str, sources: list[Path]) -> LinkCheckResult:
-    if url.startswith("file://"):
-        url = url[len("file://") :]
+    url = url.removeprefix("file://")
 
     for source in sources:
         complete_url = source.parent.joinpath(url).resolve()
