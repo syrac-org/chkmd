@@ -1,0 +1,19 @@
+[project]
+name = "chkmd"
+dynamic = ["version"]
+description = "Markdown link checker"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "aiofiles",
+    "aiohttp",
+    "lxml",
+    "markdown-it-py",
+]
+
+[project.scripts]
+chkmd = "chkmd.cli:main"
+
+[build-system]
+requires = ["setuptools >= 80.9.0", "setuptools_scm"]
+build-backend = "setuptools.build_meta"

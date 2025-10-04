@@ -1,0 +1,5 @@
+- id: chkmd
+  name: Check links in Markdown files.
+  entry: chkmd
+  language: python
+  types: [text]

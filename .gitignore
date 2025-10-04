@@ -1,0 +1,23 @@
+# Python artifacts
+venv
+build
+dist
+*.pyc
+*.egg-info
+*.lock
+
+# Test artifacts
+.coverage
+.hypothesis
+coverage.xml
+pytest.xml
+
+# Documentation artifacts
+generated
+public
+
+# Temporary files
+tmp
+
+# Log files
+*.log
