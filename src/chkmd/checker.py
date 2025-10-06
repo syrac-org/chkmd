@@ -43,7 +43,7 @@ async def extract_links_from_file(file: Path) -> tuple[Path, set[str]]:
     for a in document.findall(".//a[@href]"):
         links.add(a.attrib["href"])
     for img in document.findall(".//img[@src]"):
-        links.add(img.attrib["src"].text)
+        links.add(img.attrib["src"])
     return file, links
 
 
