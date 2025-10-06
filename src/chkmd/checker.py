@@ -1,4 +1,5 @@
 import asyncio
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import urlparse
@@ -87,9 +88,43 @@ async def check_http_link(
 
 async def check_local_link(url: str, sources: list[Path]) -> LinkCheckResult:
     url = url.removeprefix("file://")
+    path, _, anchor = url.partition("#")
 
     for source in sources:
-        complete_url = source.parent.joinpath(url).resolve()
+        complete_url = source.parent.joinpath(path).resolve()
         if not complete_url.exists():
             return LinkCheckResult(url, False, f"File not found: {complete_url}")
+
+        if anchor and not await check_anchor_in_file(source, anchor):
+            return LinkCheckResult(
+                url, False, f"Anchor not found in {complete_url}: {anchor}"
+            )
+
     return LinkCheckResult(url, True, "File exists")
+
+
+async def check_anchor_in_file(file_path: Path, anchor: str) -> bool:
+    """Checks if an anchor exists in a file."""
+    async with aio_open(file_path, "r", encoding="utf-8") as f:
+        content = await f.read()
+
+    # Check for HTML anchors
+    if f'id="{anchor}"' in content or f'name="{anchor}"' in content:
+        return True
+
+    # Check for markdown headings
+    for line in content.splitlines():
+        if line.startswith("#"):
+            heading_text = line.strip().lstrip("#").strip()
+            if slugify(heading_text) == anchor:
+                return True
+
+    return False
+
+
+def slugify(text: str) -> str:
+    """Converts a string to a slug."""
+    text = text.lower()
+    text = re.sub(r"\s+", "-", text)
+    text = re.sub(r"[^\w\-]", "", text)
+    return text
